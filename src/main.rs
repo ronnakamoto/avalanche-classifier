@@ -131,7 +131,7 @@ impl eframe::App for AvalancheClassifier {
 
                     ui.vertical_centered_justified(|ui| {
                         ui.label(
-                            egui::RichText::new("Avalanche Risk Analyzer")
+                            egui::RichText::new("Avalanche Detection and Risk Analyzer")
                                 .size(20.0)
                                 .strong()
                         );
@@ -139,7 +139,11 @@ impl eframe::App for AvalancheClassifier {
 
                         // API Key Input
                         ui.label("OpenAI API Key");
-                        ui.text_edit_singleline(&mut self.openai_api_key);
+                        ui.add(
+                            egui::TextEdit::singleline(&mut self.openai_api_key)
+                                .password(true)
+                                .hint_text("Enter your OpenAI API key")
+                        );
                         ui.add_space(16.0);
 
                         // Upload Button
@@ -174,9 +178,13 @@ impl eframe::App for AvalancheClassifier {
                         ui.add_space(16.0);
 
                         // Analysis Button
-                        let button = egui::Button::new("🧭 Analyze Terrain Risk")
-                            .fill(egui::Color32::from_rgb(0, 122, 255))
-                            .rounding(6.0);
+                        let button = egui::Button::new(
+                            egui::RichText::new("Analyze Image")
+                                .color(egui::Color32::WHITE)
+                                .size(16.0)
+                        )
+                        .fill(egui::Color32::from_rgb(0, 122, 255))
+                        .rounding(6.0);
 
                         let api_ready = !self.openai_api_key.is_empty() && self.image_data.is_some();
                         if ui.add_enabled(api_ready, button).clicked() {
@@ -225,18 +233,18 @@ impl eframe::App for AvalancheClassifier {
                                 danger_color
                             };
 
-                            let (type_text, type_icon, type_color) = match result.avalanche_type.as_str() {
-                                "powder" => ("Powder Avalanche", "❄️", warning_color),
-                                "loose-snow" => ("Loose Snow Avalanche", "🌨️", warning_color),
-                                "slab" => ("Slab Avalanche", "⚠️", danger_color),
-                                "none" => ("No Avalanche Risk", "✅", success_color),
-                                _ => ("Unknown Type", "❓", muted_color),
+                            let (type_text, type_color) = match result.avalanche_type.as_str() {
+                                "powder" => ("Powder Avalanche", warning_color),
+                                "loose-snow" => ("Loose Snow Avalanche", warning_color),
+                                "slab" => ("Slab Avalanche", danger_color),
+                                "none" => ("No Avalanche Risk", success_color),
+                                _ => ("Unknown Type", muted_color),
                             };
 
                             ui.vertical_centered(|ui| {
                                 ui.add_space(8.0);
                                 ui.label(
-                                    egui::RichText::new(format!("{} {}", type_text, type_icon))
+                                    egui::RichText::new(type_text)
                                         .size(24.0)
                                         .color(type_color)
                                         .strong()
@@ -692,7 +700,7 @@ fn main() {
     };
 
     eframe::run_native(
-        "Avalanche Risk Analyzer",
+        "Avalanche Detection and Risk Analyzer",
         options,
         Box::new(|cc| Box::new(AvalancheClassifier::new(cc))),
     )
