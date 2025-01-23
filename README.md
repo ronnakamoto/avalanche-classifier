@@ -24,7 +24,7 @@ A modern desktop application built with Rust that uses AI to detect and analyze 
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/ronnakamoto/avalanche-classifier.git
 cd avalanche-classifier
 ```
 
